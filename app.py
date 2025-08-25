@@ -275,9 +275,9 @@ with st.sidebar:
 
 
 if st.session_state.get("user_id"):
-    User = st.session_state.get("user_id", "")
-    with st.expander("User Information"):
-        st.write(f"**User_ID:** {User}")
+    # User = st.session_state.get("user_id", "")
+    # with st.expander("User Information"):
+    #     st.write(f"**User_ID:** {User}")
 
 
     with st.sidebar:
@@ -391,4 +391,5 @@ if st.session_state.get("user_id"):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
