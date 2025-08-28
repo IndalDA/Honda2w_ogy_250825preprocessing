@@ -283,7 +283,7 @@ if st.session_state.get("user_id"):
     with st.sidebar:
     #  auth.require_auth()
         st.header("⚙ Settings")
-        uploaded_file = st.file_uploader("Upload Hyundai ZIP file", type=['zip'])
+        uploaded_file = st.file_uploader("Upload Honda 2w ZIP file", type=['zip'])
         if uploaded_file is not None:
             st.session_state.uploaded_file = uploaded_file
 
@@ -391,5 +391,6 @@ if st.session_state.get("user_id"):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
