@@ -9,7 +9,8 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     from datetime import datetime, timedelta
     from collections import defaultdict
 
-    L_master = pd.read_csv(r'https://docs.google.com/spreadsheets/d/e/2PACX-1vRtTfch6bBGz68DInLsqnFpO0jaGoJ5_etyz9zrG1wRK4NiIgZSg-5A85GBe1EVE9NZ8VfePfYndXmK/pub?gid=513644184&single=true&output=csv')
+    #L_master = pd.read_csv(r'https://docs.google.com/spreadsheets/d/e/2PACX-1vRtTfch6bBGz68DInLsqnFpO0jaGoJ5_etyz9zrG1wRK4NiIgZSg-5A85GBe1EVE9NZ8VfePfYndXmK/pub?gid=513644184&single=true&output=csv')
+    L_master = pd.read_csv(r'https://docs.google.com/spreadsheets/d/e/2PACX-1vRpk2X7zJhqiXMBU5tnmhvCkaqKCUXFifM5xFEFlHRwqTsx4klELI84EjKp3OWRa14X6AwJgjePPvhf/pub?gid=690667440&single=true&output=csv')
     # ---------- helpers ----------
     files = {}     # name -> bytes
     previews = {}  # name -> DataFrame
@@ -221,3 +222,4 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
         st.warring("Pls check Folder Structure")
 
    
+
