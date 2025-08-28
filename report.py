@@ -102,6 +102,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                
     if stock:
         Stock_df = pd.concat(stock,ignore_index=True)
+        Stock_df['Quantity'] = pd.to_numeric(Stock_df['Quantity'].astype(str).str.replace(',', '', regex=False),errors='coerce')
         Stock_df['Location_code'] = Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4]
         Stock_df =L_master.merge(Stock_df,left_on='Code',right_on='Location_code',how='inner')
 
@@ -218,4 +219,5 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     else:
         st.info("ℹ No reports available to download.")
         st.warring("Pls check Folder Structure")
+
    
