@@ -184,44 +184,28 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                 else:
                     st.warning("⚠ Download content missing for this file.")
 
-   # ---------- Combined ZIP per (report_type, brand, dealer) using previews (DataFrames) ----------
-    grouped_data = defaultdict(list)
-    for file_name, df in previews.items():
-        if df is None or df.empty:
-            continue
-        parts = file_name.replace(".xlsx", "").split("_")
-        if len(parts) >= 4:
-            rep, br, dlr = parts[0], parts[1], parts[2]
-            loc_part = "_".join(parts[3:])
-            if "Location" not in df.columns:
-                df = df.copy()
-                df["Location"] = loc_part
-            grouped_data[(rep, br, dlr)].append(df)
-        else:
-            st.warning(f"❗ Invalid file name format: {file_name}")
+            # ---------- Create ZIP for all reports ----------
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        # Add each file to the ZIP
+        for file_name, file_data in file_bytes.items():
+            zipf.writestr(file_name, file_data)
 
-    if grouped_data:
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
-            for (rep, br, dlr), df_list in grouped_data.items():
-                combined_df = pd.concat(df_list, ignore_index=True)
-                excel_buffer = io.BytesIO()
-                with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
-                    combined_df.to_excel(writer, sheet_name="Sheet1", index=False)
-                output_filename = f"{rep}_{br}_{dlr}.xlsx"
-                zipf.writestr(output_filename, excel_buffer.getvalue())
-        filename = f"{brand}_Combined_Dealerwise_Reports.zip"
-        st.download_button(
-            label=f"📦 Download Combined Dealer Reports ZIP",
-            data=zip_buffer.getvalue(),
-            file_name=filename,
-            mime="application/zip",
-        )
+    # ---------- UI: Download ZIP ----------
+    st.download_button(
+        label="📦 Download Combined Dealer Reports ZIP",
+        data=zip_buffer.getvalue(),
+        file_name="Combined_Dealerwise_Reports.zip",
+        mime="application/zip"
+    )
+            
+                    
     else:
         st.info("ℹ No reports available to download.")
         st.warning("Pls check Folder Structure")
 
    
+
 
 
 
