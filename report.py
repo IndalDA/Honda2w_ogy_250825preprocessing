@@ -79,6 +79,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                 try:
                     sdf = pd.read_table(fpath, encoding='utf-16')
                     df = pd.concat([sdf], ignore_index=True)
+                    df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
                     df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
                     stock_list.append(df)
                 except Exception as e:
@@ -219,3 +220,4 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
