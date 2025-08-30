@@ -185,6 +185,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                     st.warning("⚠ Download content missing for this file.")
 
             # ---------- Create ZIP for all reports ----------
+                    
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
         # Add each file to the ZIP
@@ -200,11 +201,12 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
             
                     
-    else:
-        st.info("ℹ No reports available to download.")
-        st.warning("Pls check Folder Structure")
+    # else:
+    #     st.info("ℹ No reports available to download.")
+    #     st.warning("Pls check Folder Structure")
 
    
+
 
 
 
