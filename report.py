@@ -119,7 +119,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                    (merged.get('Availability', '').eq('On Hand')) & \
                    (merged.get('Quantity', 0) > 0)
 
-            stk = merged.loc[mask, ['Brand','Dealer','Location_y','Location_code','Code','Part Number','Quantity']].copy()
+            stk = merged.loc[mask, ['Brand','Dealer','Location_x','Location_code','Code','Part Number','Quantity']].copy()
             stk.rename(columns={'Location_x':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
 
             # **Generate report per dealer**
@@ -223,6 +223,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
