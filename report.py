@@ -120,7 +120,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                    (merged.get('Quantity', 0) > 0)
 
             stk = merged.loc[mask, ['Brand','Dealer','Location_y','Location_code','Code','Part Number','Quantity']].copy()
-            stk.rename(columns={'Location_y':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
+            stk.rename(columns={'Location_x':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
 
             # **Generate report per dealer**
             stk_filename = f"stock_{brand}_{dealer}_{Location}.xlsx"
@@ -223,6 +223,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
