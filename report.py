@@ -4,6 +4,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     import streamlit as st
     import os, io, zipfile
     import pandas as pd
+    import re
     from collections import defaultdict
     from datetime import datetime
     import urllib.error
@@ -97,9 +98,11 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
 
             # safe transforms
             if 'Inventory Location Name' in Stock_df.columns:
-                Stock_df['Location_code'] = (
-                    Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4].fillna('')
-                )
+                pattern = r'-([A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})'
+                Stock_df['Location_code'] = Stock_df['Inventory Location Name'].apply(lambda x: re.search(pattern, x).group(1) if re.search(pattern, x) else None)
+                  
+                  #  Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4].fillna('')
+                
             else:
                 Stock_df['Location_code'] = ''
 
@@ -220,5 +223,6 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
