@@ -104,6 +104,71 @@ def try_read_as_csv(file_path):
        
 
 # ---------------- Validation Functions (periods) ---------------- #
+# def validate_periods(all_locations, start_date, end_date, period_days):
+#     validation_errors = []
+#     missing_periods_log = []
+
+#     periods = []
+#     current_date = start_date
+#     while current_date <= end_date:
+#         period_end = min(current_date + timedelta(days=period_days - 1), end_date)
+#         periods.append((current_date, period_end))
+#         current_date = period_end + timedelta(days=1)
+
+#     for brand, dealer, location, location_path in all_locations:
+
+#         oem_files = [f for f in os.listdir(location_path) if f.lower().startswith('po')]
+#         mrn_files = [f for f in os.listdir(location_path) if f.lower().startswith('mrn')]
+        
+#         oem_has_period = {p: False for p in periods}
+#         if oem_files:
+#             for oem_file in oem_files:
+#                 try:
+#                     oem_df = read_file(os.path.join(location_path, oem_file))
+#                     if oem_df is None or oem_df.empty:
+#                         continue
+#                     oem_df['Order Date'] = pd.to_datetime(oem_df['Order Date'], errors='coerce')
+#                     for p in periods:
+#                         period_start, period_end = p
+#                         if any(period_start <= d.date() <= period_end for d in oem_df['Order Date'].dropna()):
+#                             oem_has_period[p] = True
+#                 except Exception as e:
+#                     validation_errors.append(f"{location}: Error validating OEM periods - {str(e)}")
+        
+#         mrn_has_period = {p: False for p in periods}
+#         if mrn_files: 
+#             for mrn_file in mrn_files:
+#                 try:
+#                     mrn_df = read_file(os.path.join(location_path, mrn_file))
+#                     if mrn_df is None or mrn_df.empty:
+#                         continue
+#                     mrn_df['MRN Date'] = pd.to_datetime(mrn_df['MRN Date'], errors='coerce')
+#                     for p in periods:
+#                         period_start, period_end = p
+#                         if any(period_start <= d.date() <= period_end for d in mrn_df['MRN Date'].dropna()):
+#                             mrn_has_period[p] = True
+#                 except Exception as e:
+#                     validation_errors.append(f"{location}: Error validating MRN periods - {str(e)}")
+
+
+#         for period_start, period_end in periods:
+#             missing_in = []
+#             if not oem_has_period[(period_start, period_end)]: missing_in.append("OEM")
+#             if not mrn_has_period[(period_start, period_end)]: missing_in.append("MRN")
+            
+#             if missing_in:
+#                 missing_periods_log.append({
+#                     'Brand': brand, 'Dealer': dealer, 'Location': location,
+#                     'Period': f"{period_start} to {period_end}",
+#                     'Missing In': ", ".join(missing_in)
+#                 })
+#                 validation_errors.append(f"{location}: {' and '.join(missing_in)} missing for period {period_start} to {period_end}")
+
+#                 validation_log_df = pd.DataFrame(missing_periods_log) if missing_periods_log else pd.DataFrame(
+#                     columns=['Brand', 'Dealer', 'Location', 'Period', 'Missing In']
+#                 )
+#                 return validation_errors, validation_log_df   
+
 def validate_periods(all_locations, start_date, end_date, period_days):
     validation_errors = []
     missing_periods_log = []
@@ -150,11 +215,12 @@ def validate_periods(all_locations, start_date, end_date, period_days):
                 except Exception as e:
                     validation_errors.append(f"{location}: Error validating MRN periods - {str(e)}")
 
-
         for period_start, period_end in periods:
             missing_in = []
-            if not oem_has_period[(period_start, period_end)]: missing_in.append("OEM")
-            if not mrn_has_period[(period_start, period_end)]: missing_in.append("MRN")
+            if not oem_has_period[(period_start, period_end)]:
+                missing_in.append("OEM")
+            if not mrn_has_period[(period_start, period_end)]:
+                missing_in.append("MRN")
             
             if missing_in:
                 missing_periods_log.append({
@@ -162,12 +228,18 @@ def validate_periods(all_locations, start_date, end_date, period_days):
                     'Period': f"{period_start} to {period_end}",
                     'Missing In': ", ".join(missing_in)
                 })
-                validation_errors.append(f"{location}: {' and '.join(missing_in)} missing for period {period_start} to {period_end}")
-
-                validation_log_df = pd.DataFrame(missing_periods_log) if missing_periods_log else pd.DataFrame(
-                    columns=['Brand', 'Dealer', 'Location', 'Period', 'Missing In']
+                validation_errors.append(
+                    f"{location}: {' and '.join(missing_in)} missing for period {period_start} to {period_end}"
                 )
-                return validation_errors, validation_log_df     
+
+    # ✅ Always return TWO values
+    validation_log_df = (
+        pd.DataFrame(missing_periods_log)
+        if missing_periods_log
+        else pd.DataFrame(columns=['Brand', 'Dealer', 'Location', 'Period', 'Missing In'])
+    )
+    return validation_errors, validation_log_df
+
             
 def validate_oem_mrn_po_codes(all_locations):
     """Safe/lenient for Hyundai; returns empty dataframes if structure not found."""
@@ -391,6 +463,7 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
