@@ -274,7 +274,7 @@ auth = StreamlitAuth()
 
 
 
-#if st.session_state.get("user_id"):
+if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
     # User = st.session_state.get("user_id", "")
     # with st.expander("User Information"):
     #     st.write(f"**User_ID:** {User}")
@@ -391,6 +391,7 @@ auth = StreamlitAuth()
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
