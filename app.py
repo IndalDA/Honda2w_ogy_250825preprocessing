@@ -269,12 +269,12 @@ def show_reports():
 
 auth = StreamlitAuth()
 
-with st.sidebar:
-    auth.require_auth()
+# with st.sidebar:
+#     auth.require_auth()
 
 
 
-if st.session_state.get("user_id"):
+#if st.session_state.get("user_id"):
     # User = st.session_state.get("user_id", "")
     # with st.expander("User Information"):
     #     st.write(f"**User_ID:** {User}")
@@ -391,6 +391,7 @@ if st.session_state.get("user_id"):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
