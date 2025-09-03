@@ -428,7 +428,11 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
 
             period_days = PERIOD_TYPES.get(st.session_state.period_type, 1)
             period_validation_errors, validation_log = validate_periods(all_locations, start_date, end_date, period_days)
+            if period_validation_errors is None:
+                period_validation_errors = []
 
+            if validation_log is None:
+                validation_log = pd.DataFrame()
         
 
             # save validation state
@@ -463,6 +467,7 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
