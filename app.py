@@ -167,7 +167,9 @@ def validate_periods(all_locations, start_date, end_date, period_days):
                 validation_log_df = pd.DataFrame(missing_periods_log) if missing_periods_log else pd.DataFrame(
                     columns=['Brand', 'Dealer', 'Location', 'Period', 'Missing In']
                 )
-                return validation_errors, validation_log_df   
+                return validation_errors if validation_errors else [], validation_log_df if not validation_log_df.empty else pd.DataFrame()
+
+                #validation_errors, validation_log_df   
 
 # def validate_periods(all_locations, start_date, end_date, period_days):
 #     validation_errors = []
@@ -467,6 +469,7 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
