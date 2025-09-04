@@ -98,9 +98,18 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
 
             # safe transforms
             if 'Inventory Location Name' in Stock_df.columns:
-                pattern = r'-([A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})'
-                Stock_df['Location_code'] = Stock_df['Inventory Location Name'].apply(lambda x: re.search(pattern, x).group(1) if re.search(pattern, x) else None)
-                  
+                Stock_df = Stock_df['Inventory Location Name'].astype(str)
+                pat = r'(?<=-)(?:[A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})(?=-)
+               # Stock_df['Location_code'] = s.str.upper().str.extract(pat, expand=False)
+                rx = re.compile(pat)
+                Stock_df['Location_code'] = s.apply(lambda x: (m.group(0) if (m := rx.search(x)) else None) if isinstance(x, str) else None)
+
+              
+                #pattern = r'-([A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})'
+                #Stock_df['Location_code'] = Stock_df['Inventory Location Name'].apply(lambda x: re.search(pattern, x).group(1) if re.search(pattern, x) else None)
+
+
+          
                   #  Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4].fillna('')
                 
             else:
@@ -223,6 +232,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
