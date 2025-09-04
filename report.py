@@ -93,48 +93,103 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                     po_list.append(df)
 
         # ---------- create & store reports FOR THIS LOCATION ----------
-        if stock_list:
-            Stock_df = pd.concat(stock_list, ignore_index=True)
+        # if stock_list:
+        #     Stock_df = pd.concat(stock_list, ignore_index=True)
 
-            # safe transforms
-            if 'Inventory Location Name' in Stock_df.columns:
-                Stock_df = Stock_df['Inventory Location Name'].astype(str)
-                pat = r'(?<=-)(?:[A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})(?=-)
-               # Stock_df['Location_code'] = s.str.upper().str.extract(pat, expand=False)
-                rx = re.compile(pat)
-                Stock_df['Location_code'] = s.apply(lambda x: (m.group(0) if (m := rx.search(x)) else None) if isinstance(x, str) else None)
+        #     # safe transforms
+        #     if 'Inventory Location Name' in Stock_df.columns:
+        #         Stock_df = Stock_df['Inventory Location Name'].astype(str)
+        #         pat = r'(?<=-)(?:[A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})(?=-)
+        #        # Stock_df['Location_code'] = s.str.upper().str.extract(pat, expand=False)
+        #         rx = re.compile(pat)
+        #         Stock_df['Location_code'] = s.apply(lambda x: (m.group(0) if (m := rx.search(x)) else None) if isinstance(x, str) else None)
 
               
-                #pattern = r'-([A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})'
-                #Stock_df['Location_code'] = Stock_df['Inventory Location Name'].apply(lambda x: re.search(pattern, x).group(1) if re.search(pattern, x) else None)
+        #         #pattern = r'-([A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})'
+        #         #Stock_df['Location_code'] = Stock_df['Inventory Location Name'].apply(lambda x: re.search(pattern, x).group(1) if re.search(pattern, x) else None)
 
 
           
-                  #  Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4].fillna('')
+        #           #  Stock_df['Inventory Location Name'].astype(str).str.split('-').str[4].fillna('')
                 
-            else:
-                Stock_df['Location_code'] = ''
+        #     else:
+        #         Stock_df['Location_code'] = ''
 
+        #     if 'Quantity' in Stock_df.columns:
+        #         Stock_df['Quantity'] = pd.to_numeric(
+        #             Stock_df['Quantity'].astype(str).str.replace(',', '', regex=False), errors='coerce'
+        #         ).fillna(0)
+        #     else:
+        #         Stock_df['Quantity'] = 0
+
+        #     merged = L_master.merge(Stock_df, left_on='Code', right_on='Location_code', how='inner') if not L_master.empty else Stock_df
+
+        #     mask = (merged.get('Location_code').notnull()) & \
+        #            (merged.get('Availability', '').eq('On Hand')) & \
+        #            (merged.get('Quantity', 0) > 0)
+
+        #     stk = merged.loc[mask, ['Brand','Dealer','Location_x','Location_code','Code','Part Number','Quantity']].copy()
+        #     stk.rename(columns={'Location_x':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
+
+        #     # **Generate report per dealer**
+        #     stk_filename = f"stock_{brand}_{dealer}_{Location}.xlsx"
+        #     _store_xlsx(stk_filename, stk)
+        if stock_list:
+            Stock_df = pd.concat(stock_list, ignore_index=True)
+        
+            # --- Extract Location_code safely from "Inventory Location Name" ---
+            if 'Inventory Location Name' in Stock_df.columns:
+                s = Stock_df['Inventory Location Name'].astype('string').str.upper()
+                # code between dashes: BR230001  or  BR23AH01
+                pat = r'(?<=-)(?:[A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2})(?=-)'
+                Stock_df['Location_code'] = s.str.extract(pat, expand=False)
+            else:
+                Stock_df['Location_code'] = pd.Series(pd.NA, index=Stock_df.index)
+        
+            # --- Quantity to numeric (handles commas & blanks) ---
             if 'Quantity' in Stock_df.columns:
-                Stock_df['Quantity'] = pd.to_numeric(
-                    Stock_df['Quantity'].astype(str).str.replace(',', '', regex=False), errors='coerce'
-                ).fillna(0)
+                Stock_df['Quantity'] = (
+                    pd.to_numeric(
+                        Stock_df['Quantity'].astype(str).str.replace(',', '', regex=False),
+                        errors='coerce'
+                    ).fillna(0)
+                )
             else:
                 Stock_df['Quantity'] = 0
-
-            merged = L_master.merge(Stock_df, left_on='Code', right_on='Location_code', how='inner') if not L_master.empty else Stock_df
-
-            mask = (merged.get('Location_code').notnull()) & \
-                   (merged.get('Availability', '').eq('On Hand')) & \
-                   (merged.get('Quantity', 0) > 0)
-
-            stk = merged.loc[mask, ['Brand','Dealer','Location_x','Location_code','Code','Part Number','Quantity']].copy()
-            stk.rename(columns={'Location_x':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
-
-            # **Generate report per dealer**
-            stk_filename = f"stock_{brand}_{dealer}_{Location}.xlsx"
+        
+            # --- Merge ---
+            merged = (
+                L_master.merge(Stock_df, left_on='Code', right_on='Location_code', how='inner')
+                if not L_master.empty else Stock_df
+            )
+        
+            # --- Build mask robustly ---
+            avail = merged['Availability'] if 'Availability' in merged.columns else ''
+            qty = merged['Quantity'] if 'Quantity' in merged.columns else 0
+            mask = merged['Location_code'].notna() & (avail == 'On Hand') & (qty > 0)
+        
+            # --- Column picking that survives merge suffixes ---
+            loc_col = 'Location_x' if 'Location_x' in merged.columns else ('Location' if 'Location' in merged.columns else None)
+            part_col = 'Part Number' if 'Part Number' in merged.columns else ('PartNumber' if 'PartNumber' in merged.columns else None)
+        
+            cols = ['Brand', 'Dealer', 'Location_code', 'Code', 'Quantity']
+            if loc_col: cols.append(loc_col)
+            if part_col: cols.append(part_col)
+            cols = [c for c in cols if c in merged.columns]  # keep only those that exist
+        
+            stk = merged.loc[mask, cols].copy()
+            # nice headers
+            rename_map = {}
+            if loc_col: rename_map[loc_col] = 'Location'
+            if part_col: rename_map[part_col] = 'PartNumber'
+            rename_map['Quantity'] = 'Qty'
+            stk.rename(columns=rename_map, inplace=True)
+        
+            # --- Save ---
+            stk_filename = f"stock_{brand}_{dealer}_{Location}.xlsx"  # assumes these vars exist
             _store_xlsx(stk_filename, stk)
 
+        
         if mrn_list:
             Mrn_df = pd.concat(mrn_list, ignore_index=True)
             merged = L_master.merge(Mrn_df, left_on='Code', right_on='Network Code', how='inner') if not L_master.empty else Mrn_df
@@ -232,6 +287,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
