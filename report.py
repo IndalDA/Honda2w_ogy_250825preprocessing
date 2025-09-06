@@ -11,9 +11,9 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
 
     # ---------- fetch master ----------
     try:
-        L_master = pd.read_csv(
-            r'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIHYkw4Q4FFtEf7Q02w60HChGJ-FbUYmRlmaS7b4jU2PvKEgAgQV0ApoXLpRChtUPb3GhE_cRb9hp0/pub?output=csv'
-        )
+        stk_L_master = pd.read_csv(
+            r'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIHYkw4Q4FFtEf7Q02w60HChGJ-FbUYmRlmaS7b4jU2PvKEgAgQV0ApoXLpRChtUPb3GhE_cRb9hp0/pub?output=csv')
+        L_master = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRpk2X7zJhqiXMBU5tnmhvCkaqKCUXFifM5xFEFlHRwqTsx4klELI84EjKp3OWRa14X6AwJgjePPvhf/pub?gid=690667440&single=true&output=csv')
     except urllib.error.URLError:
         st.warning("⚠ Unable to fetch master data from Google Sheets. Please check your internet connection.")
         L_master = pd.DataFrame()
@@ -111,7 +111,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             else:
                 Stock_df['Quantity'] = 0
 
-            merged = L_master.merge(Stock_df, left_on='Code', right_on='Location_code', how='inner') if not L_master.empty else Stock_df
+            merged = stk_L_master.merge(Stock_df, left_on='Code', right_on='Inventory Location Name', how='inner') if not L_master.empty else Stock_df
 
             mask = (merged.get('Location_code').notnull()) & \
                    (merged.get('Availability', '').eq('On Hand')) & \
@@ -223,6 +223,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
