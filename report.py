@@ -12,7 +12,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     # ---------- fetch master ----------
     try:
         L_master = pd.read_csv(
-            r'https://docs.google.com/spreadsheets/d/e/2PACX-1vRpk2X7zJhqiXMBU5tnmhvCkaqKCUXFifM5xFEFlHRwqTsx4klELI84EjKp3OWRa14X6AwJgjePPvhf/pub?gid=690667440&single=true&output=csv'
+            r'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIHYkw4Q4FFtEf7Q02w60HChGJ-FbUYmRlmaS7b4jU2PvKEgAgQV0ApoXLpRChtUPb3GhE_cRb9hp0/pub?output=csv'
         )
     except urllib.error.URLError:
         st.warning("⚠ Unable to fetch master data from Google Sheets. Please check your internet connection.")
@@ -223,6 +223,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
