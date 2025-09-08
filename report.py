@@ -13,6 +13,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     try:
         stk_L_master = pd.read_csv(
             r'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIHYkw4Q4FFtEf7Q02w60HChGJ-FbUYmRlmaS7b4jU2PvKEgAgQV0ApoXLpRChtUPb3GhE_cRb9hp0/pub?output=csv')
+        stk_L_master['Code']=stk_L_master['Code'].astype(str).str.upper()
         L_master = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vRpk2X7zJhqiXMBU5tnmhvCkaqKCUXFifM5xFEFlHRwqTsx4klELI84EjKp3OWRa14X6AwJgjePPvhf/pub?gid=690667440&single=true&output=csv')
     except urllib.error.URLError:
         st.warning("⚠ Unable to fetch master data from Google Sheets. Please check your internet connection.")
@@ -96,6 +97,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
         if stock_list:
             Stock_df = pd.concat(stock_list, ignore_index=True)
             if 'Inventory Location Name' in Stock_df.columns:
+              Stock_df['Inventory Location Name'] = Stock_df['Inventory Location Name'].astype(str).str.upper()
               s = Stock_df['Inventory Location Name'].astype('string').str.upper()
               pat = r'(?<=-)((?:[A-Z]{2}\d{6}|[A-Z]{2}\d{2}[A-Z]{2}\d{2}))(?=-)'
               Stock_df['Location_code'] = s.str.extract(pat, expand=False)
@@ -223,6 +225,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
