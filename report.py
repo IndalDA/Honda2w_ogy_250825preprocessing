@@ -116,11 +116,11 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             merged = stk_L_master.merge(Stock_df, left_on='Code', right_on='Inventory Location Name', how='inner') 
           #if not L_master.empty else Stock_df
 
-            mask = (merged.get('Location_code').notnull()) & \
+            mask = (merged.get('Inventory Location Name').notnull()) & \
                    (merged.get('Availability', '').eq('On Hand')) & \
                    (merged.get('Quantity', 0) > 0)
 
-            stk = merged.loc[mask, ['Brand','Dealer','Location_x','Location_code','Code','Part Number','Quantity']].copy()
+            stk = merged.loc[mask, ['Brand','Dealer','Location_x','Inventory Location Name','Code','Part Number','Quantity']].copy()
             stk.rename(columns={'Location_x':'Location', 'Quantity':'Qty', 'Part Number':'PartNumber'}, inplace=True)
 
             # **Generate report per dealer**
@@ -226,6 +226,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
