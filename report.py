@@ -113,7 +113,8 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             else:
                 Stock_df['Quantity'] = 0
 
-            merged = stk_L_master.merge(Stock_df, left_on='Code', right_on='Inventory Location Name', how='inner') if not L_master.empty else Stock_df
+            merged = stk_L_master.merge(Stock_df, left_on='Code', right_on='Inventory Location Name', how='inner') 
+          #if not L_master.empty else Stock_df
 
             mask = (merged.get('Location_code').notnull()) & \
                    (merged.get('Availability', '').eq('On Hand')) & \
@@ -225,6 +226,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
