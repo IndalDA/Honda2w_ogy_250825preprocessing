@@ -66,15 +66,30 @@ for var in state_vars:
 PERIOD_TYPES = { "Day": 1,"Week":7, "Month": 30, "Quarter": 180, "Year": 365}
 
 def read_file(file_path):
-    file_name=file_path.split("extracted_files\\")[1]
+    # Try to extract filename safely
+    if "extracted_files\\" in file_path:
+        file_name = file_path.split("extracted_files\\", 1)[1]
+    else:
+        file_name = os.path.basename(file_path)
     try:
-        if file_path.lower().endswith(('.xlsx')):
-         return  pd.read_excel(file_path)
+        if file_path.lower().endswith('.xlsx'):
+            return pd.read_excel(file_path)
         else:
             return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
     except Exception as e:
         print(f" read failed for {file_path}: {e}")
         return None
+
+# def read_file(file_path):
+#     file_name=file_path.split("extracted_files\\")[1]
+#     try:
+#         if file_path.lower().endswith(('.xlsx')):
+#          return  pd.read_excel(file_path)
+#         else:
+#             return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
+#     except Exception as e:
+#         print(f" read failed for {file_path}: {e}")
+#         return None
 
 
 
@@ -481,6 +496,7 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
