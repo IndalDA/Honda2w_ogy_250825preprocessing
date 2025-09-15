@@ -97,13 +97,13 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
         for fname in os.listdir(location_path):
             fpath = os.path.join(location_path, fname)
             #relative_path = fpath.split("extracted_files\\")[1]
-            relative_path = os.path.basename(fpath)
-            st.write(relative_path)
+            #relative_path = os.path.basename(fpath)
+            #st.write(relative_path)
             if not os.path.isfile(fpath):
                 continue
 
             elif not fpath.endswith('.xlsx'):
-                st.warning(f"File not Excel Workbook and .xlsx extention For : {relative_path}")
+                st.warning(f"File not Excel Workbook and .xlsx extention For : {brand}-{dealer}-{Location} :- {fname}")
                 continue
               
             fl = fname.lower().strip()
@@ -270,6 +270,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
