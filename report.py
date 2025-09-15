@@ -31,7 +31,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
         file_bytes[name] = buf.getvalue()
 
     def read_file(file_path):
-      # Try to extract filename safely
+      
       if "extracted_files\\" in file_path:
           file_name = file_path.split("extracted_files\\", 1)[1]
       else:
@@ -96,7 +96,9 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
 
         for fname in os.listdir(location_path):
             fpath = os.path.join(location_path, fname)
-            relative_path = fpath.split("extracted_files\\")[1]
+            #relative_path = fpath.split("extracted_files\\")[1]
+            relative_path = os.path.basename(fpath)
+            st.write(relative_path)
             if not os.path.isfile(fpath):
                 continue
 
@@ -268,6 +270,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
