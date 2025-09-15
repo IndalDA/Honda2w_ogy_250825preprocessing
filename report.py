@@ -93,11 +93,11 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
 
             elif fl.startswith('stock'):
                 df = read_file(fpath)
-                    #st.dataframe(df)
-                    if df is not None:
-                        df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
-                        df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
-                        stock_list.append(df)
+                #st.dataframe(df)
+                if df is not None:
+                    df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
+                    df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
+                    stock_list.append(df)
                       
                 # try:
                 #     sdf = pd.read_table(fpath, encoding='utf-16')
@@ -248,6 +248,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
