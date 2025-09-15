@@ -30,6 +30,18 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             df.to_excel(w, index=False)
         file_bytes[name] = buf.getvalue()
 
+     def read_file(file_path):
+          file_name=file_path.split("extracted_files\\")[1]
+          try:
+              if file_path.lower().endswith(('.xlsx')):
+                  return pd.read_excel(file_path)
+              else:
+                  return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
+          except Exception as e:
+              print(f" read failed for {file_path}: {e}")
+              return None
+               
+
     # def read_file(file_path):
     #     try:
     #         if file_path.lower().endswith('.xlsx'):
@@ -57,17 +69,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     #             print(f"CSV read failed for {file_path}: {e}")
     #             return None
 
-    def read_file(file_path):
-        file_name=file_path.split("extracted_files\\")[1]
-        try:
-            if file_path.lower().endswith(('.xlsx')):
-                return pd.read_excel(file_path)
-            else:
-                return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
-        except Exception as e:
-            print(f" read failed for {file_path}: {e}")
-            return None
-
+      
                     
     # ---------- per location ----------
     for i, (brand, dealer, Location, location_path) in enumerate(all_locations):
@@ -246,6 +248,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
