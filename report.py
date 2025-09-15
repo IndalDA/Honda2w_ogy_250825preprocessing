@@ -30,33 +30,45 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             df.to_excel(w, index=False)
         file_bytes[name] = buf.getvalue()
 
+    # def read_file(file_path):
+    #     try:
+    #         if file_path.lower().endswith('.xlsx'):
+    #             return pd.read_excel(file_path, engine='openpyxl')
+    #         elif file_path.lower().endswith('.xls'):
+    #             for eng in ('xlrd', 'openpyxl', 'pyxlsb'):
+    #                 try:
+    #                     return pd.read_excel(file_path, engine=eng)
+    #                 except Exception:
+    #                     pass
+    #             return try_read_as_csv(file_path)
+    #         else:
+    #             return try_read_as_csv(file_path)
+    #     except Exception as e:
+    #         print(f"Failed to read {file_path}: {e}")
+    #         return None
+
+    # def try_read_as_csv(file_path):
+    #     try:
+    #         return pd.read_csv(file_path, encoding='utf-8', sep=None, engine='python', on_bad_lines='skip')
+    #     except UnicodeDecodeError:
+    #         try:
+    #             return pd.read_csv(file_path, encoding='windows-1252', sep=None, engine='python', on_bad_lines='skip')
+    #         except Exception as e:
+    #             print(f"CSV read failed for {file_path}: {e}")
+    #             return None
+
     def read_file(file_path):
+        file_name=file_path.split("extracted_files\\")[1]
         try:
-            if file_path.lower().endswith('.xlsx'):
-                return pd.read_excel(file_path, engine='openpyxl')
-            elif file_path.lower().endswith('.xls'):
-                for eng in ('xlrd', 'openpyxl', 'pyxlsb'):
-                    try:
-                        return pd.read_excel(file_path, engine=eng)
-                    except Exception:
-                        pass
-                return try_read_as_csv(file_path)
+            if file_path.lower().endswith(('.xlsx')):
+                return pd.read_excel(file_path)
             else:
-                return try_read_as_csv(file_path)
+                return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
         except Exception as e:
-            print(f"Failed to read {file_path}: {e}")
+            print(f" read failed for {file_path}: {e}")
             return None
 
-    def try_read_as_csv(file_path):
-        try:
-            return pd.read_csv(file_path, encoding='utf-8', sep=None, engine='python', on_bad_lines='skip')
-        except UnicodeDecodeError:
-            try:
-                return pd.read_csv(file_path, encoding='windows-1252', sep=None, engine='python', on_bad_lines='skip')
-            except Exception as e:
-                print(f"CSV read failed for {file_path}: {e}")
-                return None
-
+                    
     # ---------- per location ----------
     for i, (brand, dealer, Location, location_path) in enumerate(all_locations):
         progress_bar.progress((i + 1) / max(total_locations, 1))
@@ -78,14 +90,22 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
                     mrn_list.append(df)
 
             elif fl.startswith('stock'):
-                try:
-                    sdf = pd.read_table(fpath, encoding='utf-16')
-                    df = pd.concat([sdf], ignore_index=True)
-                    df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
-                    df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
-                    stock_list.append(df)
-                except Exception as e:
-                    st.warning(f"Stock read failed for {fname}: {e}")
+                df = read_file(fpath)
+                    #st.dataframe(df)
+                    if df is not None:
+                        df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
+                        df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
+                        stock_list.append(df)
+                      
+                # try:
+                #     sdf = pd.read_table(fpath, encoding='utf-16')
+                #     df = pd.concat([sdf], ignore_index=True)
+                #     df = 
+                #     df = df[(df['Part Number'].notna()) & (df['Part Number'] != '')]
+                #     df['Brand'] = brand; df['Dealer'] = dealer; df['Location'] = Location; df['_Sourcefile_'] = fname
+                #     stock_list.append(df)
+                # except Exception as e:
+                #     st.warning(f"Stock read failed for {fname}: {e}")
 
             elif fl.startswith('po'):
                 df = read_file(fpath)
@@ -226,6 +246,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
