@@ -31,15 +31,30 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
         file_bytes[name] = buf.getvalue()
 
     def read_file(file_path):
-          file_name=file_path.split("extracted_files\\")[1]
-          try:
-              if file_path.lower().endswith(('.xlsx')):
-                  return pd.read_excel(file_path)
-              else:
-                  return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
-          except Exception as e:
-              print(f" read failed for {file_path}: {e}")
-              return None
+      # Try to extract filename safely
+      if "extracted_files\\" in file_path:
+          file_name = file_path.split("extracted_files\\", 1)[1]
+      else:
+          file_name = os.path.basename(file_path)
+      try:
+          if file_path.lower().endswith('.xlsx'):
+              return pd.read_excel(file_path)
+          else:
+              return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
+      except Exception as e:
+          print(f" read failed for {file_path}: {e}")
+          return None
+                    
+    # def read_file(file_path):
+    #       file_name=file_path.split("extracted_files\\")[1]
+    #       try:
+    #           if file_path.lower().endswith(('.xlsx')):
+    #               return pd.read_excel(file_path)
+    #           else:
+    #               return st.warning(f"File not Excel Workbook and .xlsx extention For : {file_name}")
+    #       except Exception as e:
+    #           print(f" read failed for {file_path}: {e}")
+    #           return None
                
 
     # def read_file(file_path):
@@ -248,6 +263,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
