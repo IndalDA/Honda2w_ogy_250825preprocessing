@@ -30,7 +30,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
             df.to_excel(w, index=False)
         file_bytes[name] = buf.getvalue()
 
-     def read_file(file_path):
+    def read_file(file_path):
           file_name=file_path.split("extracted_files\\")[1]
           try:
               if file_path.lower().endswith(('.xlsx')):
@@ -248,6 +248,7 @@ def process_files(validation_errors, all_locations, start_date, end_date, total_
     )
 
 #    st.success("🎉 Reports generated successfully!")
+
 
 
 
