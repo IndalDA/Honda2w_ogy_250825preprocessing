@@ -2,7 +2,8 @@ import pyodbc
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+#load_dotenv()
+load_dotenv(dotenv_path='env.txt')
 
 def create_mssql_connection():
     server = os.getenv("SERVER")
@@ -22,3 +23,4 @@ def create_mssql_connection():
 
 
 #create_mssql_connection()        
+
