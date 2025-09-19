@@ -8,11 +8,7 @@ import shutil
 import io
 import warnings
 import time
-from streamlit_integration import StreamlitAuth
-from auth_functions import AuthManager
-from database_models import create_database_engine, get_session, User
 from report import process_files
-from log import ADMIN_EMAILS, show_user_log
 from new_ui import main as ui_main
 from tbl import connection, cursor, User_event_Log
 from user_event_log import log_app_events
@@ -20,19 +16,19 @@ from user_event_log import log_app_events
 
 
 st.set_page_config(page_title="Honda 2w", layout="wide") 
-from database_models import log_event
-ENGINE = create_database_engine()
+# from database_models import log_event
+# ENGINE = create_database_engine()
 
-def log_user_event(action, details=None, level="INFO"):
-    log_event(
-        ENGINE,
-        user_id=st.session_state.get("user_id"),
-        username=st.session_state.get("username"),
-        email=st.session_state.get("email"),
-        action=action,
-        details=details,
-        level=level
-    )
+# def log_user_event(action, details=None, level="INFO"):
+#     log_event(
+#         ENGINE,
+#         user_id=st.session_state.get("user_id"),
+#         username=st.session_state.get("username"),
+#         email=st.session_state.get("email"),
+#         action=action,
+#         details=details,
+#         level=level
+#     )
 
 
 
@@ -511,6 +507,7 @@ if st.session_state.get("logged_in", False):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
