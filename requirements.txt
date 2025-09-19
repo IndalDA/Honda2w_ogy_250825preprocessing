@@ -1,7 +1,10 @@
+bcrypt
 streamlit
 pandas
 openpyxl
 xlrd
 lxml
+pyodbc
 sqlalchemy
-bcrypt
+requests
+dotenv
