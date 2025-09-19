@@ -370,7 +370,7 @@ def show_reports():
 #     st.session_state.period_type = period_type
 #     process_btn = st.button("🚀 Generate Reports", type="primary")
 
-auth = StreamlitAuth()
+#auth = StreamlitAuth()
 
 # with st.sidebar:
 #     auth.require_auth()
@@ -507,6 +507,7 @@ if st.session_state.get("logged_in", False):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
