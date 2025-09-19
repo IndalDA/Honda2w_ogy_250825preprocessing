@@ -13,6 +13,10 @@ from auth_functions import AuthManager
 from database_models import create_database_engine, get_session, User
 from report import process_files
 from log import ADMIN_EMAILS, show_user_log
+from new_ui import main as ui_main
+from tbl import connection, cursor, User_event_Log
+from user_event_log import log_app_events
+
 
 
 st.set_page_config(page_title="Honda 2w", layout="wide") 
@@ -376,13 +380,9 @@ auth = StreamlitAuth()
 #     auth.require_auth()
 
 
-
-if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
-    # User = st.session_state.get("user_id", "")
-    # with st.expander("User Information"):
-    #     st.write(f"**User_ID:** {User}")
-
-
+ui_main()
+if st.session_state.get("logged_in", False):
+    
     with st.sidebar:
     #  auth.require_auth()
         st.header("⚙ Settings")
@@ -484,6 +484,19 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
                 st.session_state.processing_complete = True
                 st.session_state.show_reports = True
                 st.session_state.continue_processing = False
+                from user_event_log import log_app_events
+                log_app_events(
+                    user_id=st.session_state.get("user_id"),
+                    start_date=start_date,
+                    end_date=end_date,
+                    select_categories=select_categories,
+                    missing_files=missing_files,
+                    validation_log_df=validation_log,
+                    success=can_process,
+                    period_type=period_type  
+                )
+
+            
             else:
                 st.session_state.show_reports = False
 
@@ -498,6 +511,7 @@ if st.session_state.get("user_id") or not  st.session_state.get("user_id") :
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
