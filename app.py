@@ -488,7 +488,7 @@ if st.session_state.get("logged_in", False):
                     select_categories=select_categories,
                     missing_files=missing_files,
                     validation_log_df=validation_log,
-                    success=can_process,
+                    success="contiune Anyway",
                     period_type=period_type  
                 )
 
@@ -507,6 +507,7 @@ if st.session_state.get("logged_in", False):
             or st.session_state.period_validation_errors):
 
             show_validation_issues()
+
 
 
 
